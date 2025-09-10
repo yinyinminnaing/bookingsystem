@@ -1,0 +1,36 @@
+package com.example.bookingsystem.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDate;
+
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "users")
+@EntityListeners(AuditingEntityListener.class)
+@Builder
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    private String userName;
+    @Column(unique = true,nullable = false)
+    private String email;
+    private String password;
+    @Column(name = "is_verified")
+    private boolean isVerified;
+    @Column(name = "is_active")
+    private boolean isActive;
+    @CreatedDate
+    @Column(name = "created_at")
+    private LocalDate createdAt;
+
+}
