@@ -27,7 +27,6 @@ public class BookingController {
     public ResponseEntity<BookingResponseDTO> bookClass(@Valid @RequestBody BookingRequestDTO request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-
         BookingResponseDTO booking = bookingService.bookClass(user.getId(), request.getClassId(), request.getUserPurchaseId());
         return ResponseEntity.ok(booking);
     }

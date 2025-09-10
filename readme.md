@@ -2,4 +2,3 @@
 ## Spring Boot CRUD
 ## Scheduler
 ## Redis
-## Kafka
