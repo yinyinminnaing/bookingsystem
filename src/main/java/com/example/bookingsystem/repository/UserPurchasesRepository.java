@@ -13,7 +13,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public interface UserPurchasesRepository extends JpaRepository<UserPurchases, Integer> {
     List<UserPurchases> findByUser(User user);
     List<UserPurchases> findByUserAndPurchaseStatus(User user, PurchaseStatus status);

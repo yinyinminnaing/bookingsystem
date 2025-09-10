@@ -25,6 +25,7 @@ public class UserPurchases {
     private LocalDate purchasedDate;
     @Column(name = "expired_date")
     private LocalDate expiredDate;
+    private int remainingCredits;
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;

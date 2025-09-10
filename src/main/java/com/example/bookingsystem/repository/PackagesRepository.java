@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+
 public interface PackagesRepository extends JpaRepository<Packages, Integer> {
     List<Packages> findByIsActiveTrue();
     List<Packages> findByCountryIdAndIsActiveTrue(Integer countryId);

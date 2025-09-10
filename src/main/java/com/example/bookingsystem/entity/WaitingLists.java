@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "waiting_logs")
+@Table(name = "waiting_lists")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WaitingLogs {
+public class WaitingLists {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,4 +43,12 @@ public class WaitingLogs {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "class_id", nullable = false)
+    private Classes classes;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_purchase_id", nullable = false)
+    private UserPurchases userPurchases;
 }
