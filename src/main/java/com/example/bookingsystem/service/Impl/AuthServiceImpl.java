@@ -6,19 +6,13 @@ import com.example.bookingsystem.repository.UserRepository;
 import com.example.bookingsystem.service.AuthService;
 import com.example.bookingsystem.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -72,6 +66,19 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow();
         String jwtToken = jwtUtil.generateToken(authenticated);
         return new AuthResponse(jwtToken, jwtUtil.getJwtExpiration(),"Login successful");
+    }
+
+    @Transactional
+    public void verifyEmail(String email, String token) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+
+        if (user.isVerified()) {
+            throw new IllegalStateException("This mail already exists.");
+        }
+
+        user.setVerified(true);
+        userRepository.save(user);
     }
 
 

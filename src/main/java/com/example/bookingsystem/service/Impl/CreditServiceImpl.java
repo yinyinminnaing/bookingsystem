@@ -15,8 +15,7 @@ public class CreditServiceImpl implements CreditService {
     @Override
     @Transactional
     public void deductCredits(UserPurchases userPurchase, int credits) {
-        // This would need to be implemented based on your credit system
-        // For now, we'll assume UserPurchases has a credit field
+
         if (userPurchase.getRemainingCredits() < credits) {
             throw new RuntimeException("Insufficient credits");
         }

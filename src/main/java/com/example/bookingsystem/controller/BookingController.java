@@ -2,10 +2,14 @@ package com.example.bookingsystem.controller;
 
 import com.example.bookingsystem.dto.BookingRequestDTO;
 import com.example.bookingsystem.dto.BookingResponseDTO;
-import com.example.bookingsystem.dto.ClassResponseDTO;
 import com.example.bookingsystem.entity.User;
 import com.example.bookingsystem.service.BookingService;
-import com.example.bookingsystem.service.ClassService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +22,20 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/bookings")
 @RequiredArgsConstructor
+@Tag(name = "Bookings", description = "Class booking management endpoints")
+@SecurityRequirement(name = "Bearer Authentication")
 public class BookingController {
 
     private final BookingService bookingService;
 
 
     @PostMapping("/book")
+    @Operation(summary = "Book a class", description = "Book a class using user's active package credits")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Class booked successfully"),
+            @ApiResponse(responseCode = "400", description = "Class full, user added to waitlist"),
+            @ApiResponse(responseCode = "409", description = "User already has booking for this class")
+    })
     public ResponseEntity<BookingResponseDTO> bookClass(@Valid @RequestBody BookingRequestDTO request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -32,6 +44,8 @@ public class BookingController {
     }
 
     @PostMapping("/cancel/{bookingId}")
+    @Operation(summary = "Cancel booking", description = "Cancel a confirmed booking and refund credits")
+    @Parameter(name = "bookingId", description = "ID of the booking to cancel", required = true)
     public ResponseEntity<BookingResponseDTO> cancelBooking(@PathVariable Integer bookingId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -41,6 +55,7 @@ public class BookingController {
     }
 
     @GetMapping("/my-bookings")
+    @Operation(summary = "Get user bookings", description = "Retrieve all bookings for the authenticated user")
     public ResponseEntity<List<BookingResponseDTO>> getMyBookings() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -50,6 +65,7 @@ public class BookingController {
     }
 
     @GetMapping("/my-confirmed-bookings")
+    @Operation(summary = "Get confirmed bookings", description = "Retrieve only confirmed bookings for the authenticated user")
     public ResponseEntity<List<BookingResponseDTO>> getMyConfirmedBookings() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
