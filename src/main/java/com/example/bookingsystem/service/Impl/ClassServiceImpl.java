@@ -12,6 +12,7 @@ import com.example.bookingsystem.repository.CountryRepository;
 import com.example.bookingsystem.service.ClassService;
 import com.example.bookingsystem.service.UserPurchasesService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClassServiceImpl implements ClassService {
     private final ClassesRepository classesRepository;
     private final CountryRepository countryRepository;
@@ -38,7 +40,9 @@ public class ClassServiceImpl implements ClassService {
                 .collect(Collectors.toList());
 
         // Get upcoming classes for accessible countries
-        LocalTime currentTime = LocalTime.now();
+        LocalTime currentTime = LocalTime.parse("08:00:00");
+        log.info("Current Time: " + currentTime);
+
         return accessibleCountries.stream()
                 .flatMap(country -> classesRepository.findUpcomingClassesByCountry(country, currentTime).stream())
                 .map(this::convertToDTO)
@@ -50,7 +54,7 @@ public class ClassServiceImpl implements ClassService {
         Country country = countryRepository.findById(countryId)
                 .orElseThrow(() -> new RuntimeException("Country not found"));
 
-        LocalTime currentTime = LocalTime.now();
+        LocalTime currentTime = LocalTime.parse("08:00:00");
         return classesRepository.findUpcomingClassesByCountry(country, currentTime).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());

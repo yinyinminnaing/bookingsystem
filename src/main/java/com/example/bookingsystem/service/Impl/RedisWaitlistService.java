@@ -1,7 +1,5 @@
 package com.example.bookingsystem.service.Impl;
 
-import com.example.bookingsystem.entity.Classes;
-import com.example.bookingsystem.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

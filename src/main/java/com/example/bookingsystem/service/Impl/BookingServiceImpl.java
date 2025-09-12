@@ -33,35 +33,6 @@ public class BookingServiceImpl implements BookingService {
     private final RedisLockService redisLockService;
     private final RedisWaitlistService redisWaitlistService;
 
-   /* @Override
-    @Transactional
-    public BookingResponseDTO bookClass(Integer userId, Integer classId, Integer userPurchaseId) {
-        User user = getUserById(userId);
-        Classes classes = getClassById(classId);
-        UserPurchases userPurchase = getUserPurchase(userPurchaseId, userId);
-
-        // Check if user already has a booking for this class
-        if (bookingRepository.findByUserAndClassesAndBookingStatus(user, classes, BookingStatus.CONFIRMED).isPresent()) {
-            throw new RuntimeException("User already has a booking for this class");
-        }
-
-        // Check if user is on waitlist for this class
-        Optional<WaitingLists> existingWaitlist = waitlistRepository.findByUserAndClasses(user, classes);
-        if (existingWaitlist.isPresent()) {
-            throw new RuntimeException("User is already on waitlist for this class");
-        }
-
-        int currentBookings = bookingRepository.countConfirmedBookingsForClass(classes);
-        boolean classFull = currentBookings >= classes.getMaxCapacity();
-
-        if (classFull) {
-            // Add to waitlist and deduct credits
-            return addToWaitlist(user, classes, userPurchase);
-        } else {
-            // Create direct booking
-            return createBooking(user, classes, userPurchase);
-        }
-    }*/
 
     @Transactional
     public BookingResponseDTO bookClass(Integer userId, Integer classId, Integer userPurchaseId) {
@@ -205,31 +176,9 @@ public class BookingServiceImpl implements BookingService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-       // Booking savedBooking = bookingRepository.save(booking);
-       // return convertToDTO(savedBooking);
         return bookingRepository.save(booking);
     }
 
-    /*private BookingResponseDTO addToWaitlist(User user, Classes classes, UserPurchases userPurchase) {
-        creditService.deductCredits(userPurchase, classes.getRequiredCredits());
-
-        WaitingLists waitlist = WaitingLists.builder()
-                .user(user)
-                .classes(classes)
-                .userPurchases(userPurchase)
-                .joinedDate(LocalDateTime.now())
-                .action(WaitingAction.WAITING)
-                .deductedCredits(classes.getRequiredCredits())
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        WaitingLists savedWaitlist = waitlistRepository.save(waitlist);
-
-        BookingResponseDTO response = convertToDTO(null);
-        response.setOnWaitlist(true);
-        response.setWaitlistPosition(getWaitlistPosition(savedWaitlist));
-        return response;
-    }*/
     private BookingResponseDTO addToWaitlist(User user, Classes classes, UserPurchases userPurchase) {
         // Deduct credits for waitlist
         creditService.deductCredits(userPurchase, classes.getRequiredCredits());
@@ -334,7 +283,6 @@ public class BookingServiceImpl implements BookingService {
     @Scheduled(fixedRate = 300000) // Every 5 minutes
     public void processWaitlists() {
         log.info("Processing all waitlists...");
-        // Implementation would iterate through classes and process waitlists
     }
 
     @Scheduled(cron = "0 0 2 * * ?") // Daily at 2 AM
